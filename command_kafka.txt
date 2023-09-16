@@ -1,0 +1,56 @@
+---https://www.youtube.com/watch?v=KerNf0NANMo&ab_channel=DarshilParmar
+
+wget https://downloads.apache.org/kafka/3.4.1/kafka_2.12-3.4.1.tgz
+tar -xvf kafka_2.12-3.4.1.tgz
+
+
+-----------------------
+java -version
+--sudo yum install java-1.8.0-openjdk
+
+sudo yum install java-1.8.0-amazon-corretto
+
+java -version
+
+cd kafka_2.12-3.4.1
+
+Start Zoo-keeper:
+-------------------------------
+bin/zookeeper-server-start.sh config/zookeeper.properties
+
+Open another window to start kafka
+But first ssh to to your ec2 machine as done above
+
+
+Start Kafka-server:
+----------------------------------------
+Duplicate the session & enter in a new console --
+export KAFKA_HEAP_OPTS="-Xmx256M -Xms128M"
+cd kafka_2.12-3.4.1
+bin/kafka-server-start.sh config/server.properties
+
+It is pointing to private server , change server.properties so that it can run in public IP 
+
+To do this , you can follow any of the 2 approaches shared belwo --
+Do a "sudo nano config/server.properties" - change ADVERTISED_LISTENERS to public ip of the EC2 instance
+
+
+Create the topic:
+-----------------------------
+Duplicate the session & enter in a new console --
+cd kafka_2.12-3.4.1
+---bin/kafka-topics.sh --create --topic kafka_stock_market --bootstrap-server {3.136.18.235:9092} --replication-factor 1 --partitions 1
+
+bin/kafka-topics.sh --create --topic kafka_stock_market --bootstrap-server 3.136.18.235:9092 --replication-factor 1 --partitions 1
+--this is to create a new topic, when running next time you can check out the list of topics
+bin/kafka-topics.sh --list --bootstrap-server 18.218.41.198:9092
+
+Start Producer:
+--------------------------
+bin/kafka-console-producer.sh --topic kafka_stock_market --bootstrap-server 3.136.18.235:9092
+ ---------------here we will be adding the public ip
+Start Consumer:
+-------------------------
+Duplicate the session & enter in a new console --
+cd kafka_2.12-3.4.1
+bin/kafka-console-consumer.sh --topic kafka_stock_market --bootstrap-server 3.136.18.235:9092
